@@ -1,0 +1,31 @@
+.status {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.board-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  font-size: 5rem;
+  text-align: center;
+  border: 2px solid black;
+  cursor: pointer;
+}
+
+.square:hover {
+  background-color: lightgray;
+}
+
+.x {
+  color: blue;
+}
+
+.o {
+  color: red;
+}
