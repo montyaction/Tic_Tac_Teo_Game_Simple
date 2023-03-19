@@ -16,8 +16,12 @@ document.querySelector('#app').innerHTML = `
   <div class="square" data-index="7"></div>
   <div class="square" data-index="8"></div>
 </div>
-<p class="status"></p>
-<button class="reset">Reset</button>
+<div class="board-row">
+  <p class="status"></p><br>
+</div>
+<div class="board-row">
+  <button class="reset">Reset</button>
+</div>
 `
 
 // Set up board

@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+.board-row p {
+  display: inline-block;
+}
+
 .square {
   width: 100px;
   height: 100px;

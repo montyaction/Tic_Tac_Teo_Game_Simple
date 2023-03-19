@@ -29,3 +29,10 @@ If you encounter any bugs or issues while using the game, please open an issue o
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+Behind the scenes of coding a website from scratch! 💻👨‍💻👩‍💻 #webdevelopment #codinglife #websitedesign
+
+Got a website idea but not sure where to start? Let us help you bring it to life with our custom web development services! 🚀💻 #websitedesign #custom
+
+From HTML to CSS to Javascript - learn the basics of web development with our beginners guide! 🔍💻 #webdevelopment #codingtips #learnprogramming
+
