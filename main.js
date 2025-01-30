@@ -47,6 +47,10 @@ let disabled = false;
 let moveHistory = [];
 let timer;
 const moveTimeLimit = 10000; // 10 seconds
+let players = {
+  X: { rating: 1000 },
+  O: { rating: 1000 },
+};
 
 // Function to check for a winner
 function calculateWinner(squares) {
@@ -110,6 +114,18 @@ function startTimer() {
   }, moveTimeLimit);
 }
 
+// Update ratings after a game
+function updateRatings(winner) {
+  if (winner === "X") {
+    players.X.rating += 10;
+    players.O.rating -= 10;
+  } else if (winner === "O") {
+    players.O.rating += 10;
+    players.X.rating -= 10;
+  }
+  localStorage.setItem("players", JSON.stringify(players));
+}
+
 // Function to update game state and DOM
 function handleClick(square) {
   if (squares[square] || winner || disabled) {
@@ -123,6 +139,7 @@ function handleClick(square) {
   if (winner) {
     statusElement.textContent = `${winner} wins!`;
     disabled = true;
+    updateRatings(winner);
   } else {
     statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
     startTimer();
