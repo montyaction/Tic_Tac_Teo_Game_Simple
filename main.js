@@ -1,21 +1,23 @@
 import "./style.css";
 
+const boardSize = 4; // Change this to any size (e.g., 4 for 4x4)
+const totalSquares = boardSize * boardSize;
+
+// Generate the board dynamically
+const boardHTML = Array.from(
+  { length: boardSize },
+  () => `
+  <div class="board-row">
+    ${Array.from(
+      { length: boardSize },
+      () => `<div class="square"></div>`
+    ).join("")}
+  </div>
+`
+).join("");
+
 document.querySelector("#app").innerHTML = `
-<div class="board-row">
-  <div class="square"></div>
-  <div class="square"></div>
-  <div class="square"></div>
-</div>
-<div class="board-row">
-  <div class="square"></div>
-  <div class="square"></div>
-  <div class="square"></div>
-</div>
-<div class="board-row">
-  <div class="square"></div>
-  <div class="square"></div>
-  <div class="square"></div>
-</div>
+  ${boardHTML}
 <div class="board-row">
   <p class="status"></p><br>
 </div>
@@ -25,7 +27,7 @@ document.querySelector("#app").innerHTML = `
 `;
 
 // Initialize game state
-let squares = Array(9).fill("");
+let squares = Array(totalSquares).fill("");
 let xIsNext = true;
 let winner = null;
 let disabled = false;
@@ -37,21 +39,33 @@ const resetElement = document.querySelector(".reset");
 
 // Function to check for a winner
 function calculateWinner(squares) {
-  const winningCombos = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+  const winningCombos = [];
+  // Generate winning combinations for N x N board
+  for (let i = 0; i < boardSize; i++) {
+    // Rows
+    winningCombos.push(
+      Array.from({ length: boardSize }, (_, j) => i * boardSize + j)
+    );
+    // Columns
+    winningCombos.push(
+      Array.from({ length: boardSize }, (_, j) => i + j * boardSize)
+    );
+  }
+  // Diagonals
+  winningCombos.push(
+    Array.from({ length: boardSize }, (_, i) => i * (boardSize + 1))
+  );
+  winningCombos.push(
+    Array.from({ length: boardSize }, (_, i) => (i + 1) * (boardSize - 1))
+  );
 
   for (let combo of winningCombos) {
-    const [a, b, c] = combo;
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+    const [first, ...rest] = combo;
+    if (
+      squares[first] &&
+      rest.every((index) => squares[index] === squares[first])
+    ) {
+      return squares[first];
     }
   }
   return null;
