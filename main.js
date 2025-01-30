@@ -51,6 +51,7 @@ let players = {
   X: { rating: 1000, coins: 0 },
   O: { rating: 1000, coins: 0 },
 };
+let gameHistory = [];
 
 // Function to check for a winner
 function calculateWinner(squares) {
@@ -134,6 +135,16 @@ function awardCoins(winner) {
   localStorage.setItem("players", JSON.stringify(players));
 }
 
+// Store game history
+function storeGameHistory(winner) {
+  gameHistory.push({
+    winner,
+    date: new Date().toLocaleString(),
+    moves: moveHistory.length,
+  });
+  localStorage.setItem("gameHistory", JSON.stringify(gameHistory));
+}
+
 // Function to update game state and DOM
 function handleClick(square) {
   if (squares[square] || winner || disabled) {
@@ -149,6 +160,7 @@ function handleClick(square) {
     disabled = true;
     updateRatings(winner);
     awardCoins(winner);
+    storeGameHistory(winner);
   } else {
     statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
     startTimer();
