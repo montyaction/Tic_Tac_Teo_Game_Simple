@@ -29,6 +29,7 @@ document.querySelector("#app").innerHTML = `
   <button class="reset">Reset</button>
   <button class="undo">Undo</button>
 </div>
+<div id="leaderboard"></div>
 `;
 
 // Get Dom elements
@@ -145,6 +146,17 @@ function storeGameHistory(winner) {
   localStorage.setItem("gameHistory", JSON.stringify(gameHistory));
 }
 
+function displayLeaderboard() {
+  const leaderboardHTML = `
+    <div class="leaderboard">
+      <h2>Leaderboard</h2>
+      <p>X: ${players.X.rating} rating, ${players.X.coins} coins</p>
+      <p>O: ${players.O.rating} rating, ${players.O.coins} coins</p>
+    </div>
+  `;
+  document.querySelector("#leaderboard").innerHTML = leaderboardHTML;
+}
+
 // Function to update game state and DOM
 function handleClick(square) {
   if (squares[square] || winner || disabled) {
@@ -161,6 +173,8 @@ function handleClick(square) {
     updateRatings(winner);
     awardCoins(winner);
     storeGameHistory(winner);
+    // Update leaderboard after a win
+    displayLeaderboard();
   } else {
     statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
     startTimer();
@@ -185,6 +199,9 @@ function resetGame() {
 
   // Update status message
   statusElement.textContent = "Next player: X";
+
+  // Update leaderboard after reset
+  displayLeaderboard();
 }
 
 // Add event listeners to squares
@@ -216,3 +233,5 @@ undoElement.addEventListener("click", () => {
     statusElement.textContent = `Next player: ${xIsNext ? "X" : "O"}`;
   }
 });
+
+displayLeaderboard();
