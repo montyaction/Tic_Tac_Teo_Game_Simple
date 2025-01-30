@@ -45,6 +45,8 @@ let xIsNext = true;
 let winner = null;
 let disabled = false;
 let moveHistory = [];
+let timer;
+const moveTimeLimit = 10000; // 10 seconds
 
 // Function to check for a winner
 function calculateWinner(squares) {
@@ -92,6 +94,22 @@ function makeAIMove() {
   }
 }
 
+// Start timer for each move
+function startTimer() {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    if (!winner && !disabled) {
+      statusElement.textContent = `Time's up! ${
+        xIsNext ? "X" : "O"
+      } loses a turn.`;
+      xIsNext = !xIsNext;
+      if (mode === "pvc") {
+        makeAIMove();
+      }
+    }
+  }, moveTimeLimit);
+}
+
 // Function to update game state and DOM
 function handleClick(square) {
   if (squares[square] || winner || disabled) {
@@ -107,6 +125,7 @@ function handleClick(square) {
     disabled = true;
   } else {
     statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
+    startTimer();
     if (mode === "pvc") {
       makeAIMove();
     }
