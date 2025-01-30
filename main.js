@@ -1,6 +1,6 @@
 import "./style.css";
 
-const boardSize = 4; // Change this to any size (e.g., 4 for 4x4)
+const boardSize = 3; // Change this to any size (e.g., 4 for 4x4)
 const totalSquares = boardSize * boardSize;
 
 // Generate the board dynamically
@@ -17,6 +17,10 @@ const boardHTML = Array.from(
 ).join("");
 
 document.querySelector("#app").innerHTML = `
+<div class="mode-selection">
+  <button class="mode" data-mode="pvp">Player vs Player</button>
+  <button class="mode" data-mode="pvc">Player vs Computer</button>
+</div>
   ${boardHTML}
 <div class="board-row">
   <p class="status"></p><br>
@@ -26,16 +30,18 @@ document.querySelector("#app").innerHTML = `
 </div>
 `;
 
+// Get Dom elements
+const gameModes = document.querySelectorAll(".mode");
+const statusElement = document.querySelector(".status");
+const squaresElements = document.querySelectorAll(".square");
+const resetElement = document.querySelector(".reset");
+
 // Initialize game state
+let mode = "pvp"; // Default mode
 let squares = Array(totalSquares).fill("");
 let xIsNext = true;
 let winner = null;
 let disabled = false;
-
-// Get Dom elements
-const statusElement = document.querySelector(".status");
-const squaresElements = document.querySelectorAll(".square");
-const resetElement = document.querySelector(".reset");
 
 // Function to check for a winner
 function calculateWinner(squares) {
@@ -71,6 +77,18 @@ function calculateWinner(squares) {
   return null;
 }
 
+// AI logic for Player vs Computer mode
+function makeAIMove() {
+  if (mode === "pvc" && !xIsNext && !winner && !disabled) {
+    const availableMoves = squares
+      .map((val, index) => (val === "" ? index : null))
+      .filter((val) => val !== null);
+    const randomMove =
+      availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    handleClick(randomMove);
+  }
+}
+
 // Function to update game state and DOM
 function handleClick(square) {
   if (squares[square] || winner || disabled) {
@@ -85,18 +103,16 @@ function handleClick(square) {
     disabled = true;
   } else {
     statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
+    if (mode === "pvc") {
+      makeAIMove();
+    }
   }
 }
 
-// Add event listeners to squares
-squaresElements.forEach((squareElement, index) => {
-  squareElement.addEventListener("click", () => handleClick(index));
-});
-
-// Reset the game board
-resetElement.addEventListener("click", () => {
+// Reset the Game
+function resetGame() {
   // Reset game state variables
-  squares = Array(9).fill("");
+  squares = Array(totalSquares).fill("");
   xIsNext = true;
   winner = null;
   disabled = false;
@@ -108,4 +124,20 @@ resetElement.addEventListener("click", () => {
 
   // Update status message
   statusElement.textContent = "Next player: X";
+}
+
+// Add event listeners to squares
+squaresElements.forEach((squareElement, index) => {
+  squareElement.addEventListener("click", () => handleClick(index));
 });
+
+// Add event listeners for mode selection
+gameModes.forEach((button) => {
+  button.addEventListener("click", () => {
+    mode = button.dataset.mode;
+    resetGame();
+  });
+});
+
+// Reset the game board
+resetElement.addEventListener("click", () => resetGame());
