@@ -1,6 +1,6 @@
-import './style.css'
+import "./style.css";
 
-document.querySelector('#app').innerHTML = `
+document.querySelector("#app").innerHTML = `
 <div class="board-row">
   <div class="square"></div>
   <div class="square"></div>
@@ -22,7 +22,8 @@ document.querySelector('#app').innerHTML = `
 <div class="board-row">
   <button class="reset">Reset</button>
 </div>
-`
+`;
+
 // Initialize game state
 let squares = Array(9).fill("");
 let xIsNext = true;
@@ -32,51 +33,65 @@ let disabled = false;
 // Get Dom elements
 const statusElement = document.querySelector(".status");
 const squaresElements = document.querySelectorAll(".square");
+const resetElement = document.querySelector(".reset");
 
 // Function to check for a winner
 function calculateWinner(squares) {
-    const winningCombos = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
+  const winningCombos = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
 
-    for (let combo of winningCombos) {
-        const [a, b, c] = combo;
-        if (
-            squares[a] &&
-            squares[a] === squares[b] &&
-            squares[a] === squares[c]
-        ) {
-            return squares[a];
-        }
+  for (let combo of winningCombos) {
+    const [a, b, c] = combo;
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
     }
-    return null;
+  }
+  return null;
 }
 
 // Function to update game state and DOM
 function handleClick(square) {
-    if (squares[square] || winner || disabled) {
-        return;
-    }
-    squares[square] = xIsNext ? "X" : "O";
-    squaresElements[square].textContent = squares[square];
-    xIsNext = !xIsNext;
-    winner = calculateWinner(squares);
-    if (winner) {
-        statusElement.textContent = `${winner} wins!`;
-        disabled = true;
-    } else {
-        statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
-    }
+  if (squares[square] || winner || disabled) {
+    return;
+  }
+  squares[square] = xIsNext ? "X" : "O";
+  squaresElements[square].textContent = squares[square];
+  xIsNext = !xIsNext;
+  winner = calculateWinner(squares);
+  if (winner) {
+    statusElement.textContent = `${winner} wins!`;
+    disabled = true;
+  } else {
+    statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
+  }
 }
 
 // Add event listeners to squares
 squaresElements.forEach((squareElement, index) => {
-    squareElement.addEventListener("click", () => handleClick(index));
+  squareElement.addEventListener("click", () => handleClick(index));
+});
+
+// Reset the game board
+resetElement.addEventListener("click", () => {
+  // Reset game state variables
+  squares = Array(9).fill("");
+  xIsNext = true;
+  winner = null;
+  disabled = false;
+
+  // Clear the board visually
+  squaresElements.forEach((square) => {
+    square.textContent = "";
+  });
+
+  // Update status message
+  statusElement.textContent = "Next player: X";
 });
