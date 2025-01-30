@@ -27,14 +27,16 @@ document.querySelector("#app").innerHTML = `
 </div>
 <div class="board-row">
   <button class="reset">Reset</button>
+  <button class="undo">Undo</button>
 </div>
 `;
 
 // Get Dom elements
 const gameModes = document.querySelectorAll(".mode");
-const statusElement = document.querySelector(".status");
 const squaresElements = document.querySelectorAll(".square");
+const statusElement = document.querySelector(".status");
 const resetElement = document.querySelector(".reset");
+const undoElement = document.querySelector(".undo");
 
 // Initialize game state
 let mode = "pvp"; // Default mode
@@ -42,6 +44,7 @@ let squares = Array(totalSquares).fill("");
 let xIsNext = true;
 let winner = null;
 let disabled = false;
+let moveHistory = [];
 
 // Function to check for a winner
 function calculateWinner(squares) {
@@ -94,6 +97,7 @@ function handleClick(square) {
   if (squares[square] || winner || disabled) {
     return;
   }
+  moveHistory.push([...squares]); // Store current state
   squares[square] = xIsNext ? "X" : "O";
   squaresElements[square].textContent = squares[square];
   xIsNext = !xIsNext;
@@ -141,3 +145,17 @@ gameModes.forEach((button) => {
 
 // Reset the game board
 resetElement.addEventListener("click", () => resetGame());
+
+// Undo functionality
+undoElement.addEventListener("click", () => {
+  if (moveHistory.length > 0) {
+    squares = moveHistory.pop();
+    squaresElements.forEach((squareElement, index) => {
+      squareElement.textContent = squares[index];
+    });
+    xIsNext = !xIsNext;
+    winner = null;
+    disabled = false;
+    statusElement.textContent = `Next player: ${xIsNext ? "X" : "O"}`;
+  }
+});
