@@ -1,27 +1,33 @@
 import "./style.css";
 
+// Constants
 const boardSize = 3; // Change this to any size (e.g., 4 for 4x4)
 const totalSquares = boardSize * boardSize;
+const moveTimeLimit = 10000; // 10 seconds
 
+const app = document.querySelector("#app");
 // Generate the board dynamically
-const boardHTML = Array.from(
-  { length: boardSize },
-  () => `
-  <div class="board-row">
-    ${Array.from(
-      { length: boardSize },
-      () => `<div class="square"></div>`
-    ).join("")}
-  </div>
-`
-).join("");
+function generateBoardHTML() {
+  return Array.from(
+    { length: boardSize },
+    () => `
+    <div class="board-row">
+      ${Array.from(
+        { length: boardSize },
+        () => `<div class="square"></div>`
+      ).join("")}
+    </div>
+  `
+  ).join("");
+}
 
-document.querySelector("#app").innerHTML = `
+// Initialize HTML structure
+app.innerHTML = `
 <div class="mode-selection">
   <button class="mode" data-mode="pvp">Player vs Player</button>
   <button class="mode" data-mode="pvc">Player vs Computer</button>
 </div>
-  ${boardHTML}
+  ${generateBoardHTML()}
 <div class="board-row">
   <p class="status"></p><br>
 </div>
@@ -32,14 +38,14 @@ document.querySelector("#app").innerHTML = `
 <div id="leaderboard"></div>
 `;
 
-// Get Dom elements
+// Dom Elements
 const gameModes = document.querySelectorAll(".mode");
 const squaresElements = document.querySelectorAll(".square");
 const statusElement = document.querySelector(".status");
 const resetElement = document.querySelector(".reset");
 const undoElement = document.querySelector(".undo");
 
-// Initialize game state
+// Game State
 let mode = "pvp"; // Default mode
 let squares = Array(totalSquares).fill("");
 let xIsNext = true;
@@ -47,17 +53,17 @@ let winner = null;
 let disabled = false;
 let moveHistory = [];
 let timer;
-const moveTimeLimit = 10000; // 10 seconds
-let players = {
+let players = JSON.parse(localStorage.getItem("players")) || {
   X: { rating: 1000, coins: 0 },
   O: { rating: 1000, coins: 0 },
 };
-let gameHistory = [];
+let gameHistory = JSON.parse(localStorage.getItem("gameHistory")) || [];
 
-// Function to check for a winner
-function calculateWinner(squares) {
+// Helper Functions
+
+// Generates winning combinations for an N x N board.
+function generateWinningCombinations() {
   const winningCombos = [];
-  // Generate winning combinations for N x N board
   for (let i = 0; i < boardSize; i++) {
     // Rows
     winningCombos.push(
@@ -75,7 +81,12 @@ function calculateWinner(squares) {
   winningCombos.push(
     Array.from({ length: boardSize }, (_, i) => (i + 1) * (boardSize - 1))
   );
+  return winningCombos;
+}
 
+// Checks if there's a winner
+function calculateWinner(squares) {
+  const winningCombos = generateWinningCombinations();
   for (let combo of winningCombos) {
     const [first, ...rest] = combo;
     if (
@@ -88,7 +99,7 @@ function calculateWinner(squares) {
   return null;
 }
 
-// AI logic for Player vs Computer mode
+// Make a move for the AI in Player vs Computer mode
 function makeAIMove() {
   if (mode === "pvc" && !xIsNext && !winner && !disabled) {
     const availableMoves = squares
@@ -100,7 +111,7 @@ function makeAIMove() {
   }
 }
 
-// Start timer for each move
+// Starts a timer for each move.
 function startTimer() {
   clearTimeout(timer);
   timer = setTimeout(() => {
@@ -116,7 +127,7 @@ function startTimer() {
   }, moveTimeLimit);
 }
 
-// Update ratings after a game
+// Updates player ratings after a game.
 function updateRatings(winner) {
   if (winner === "X") {
     players.X.rating += 10;
@@ -128,16 +139,16 @@ function updateRatings(winner) {
   localStorage.setItem("players", JSON.stringify(players));
 }
 
-// Award coins to the winner
-function awardCoins(winner) {
+// Award coins to the winner.
+function updateAwardCoins(winner) {
   if (winner) {
     players[winner].coins += 100;
   }
   localStorage.setItem("players", JSON.stringify(players));
 }
 
-// Store game history
-function storeGameHistory(winner) {
+// Store game history.
+function updateGameHistory(winner) {
   gameHistory.push({
     winner,
     date: new Date().toLocaleString(),
@@ -146,7 +157,8 @@ function storeGameHistory(winner) {
   localStorage.setItem("gameHistory", JSON.stringify(gameHistory));
 }
 
-function displayLeaderboard() {
+// Displays the leaderboard.
+function updateLeaderboard() {
   const leaderboardHTML = `
     <div class="leaderboard">
       <h2>Leaderboard</h2>
@@ -157,37 +169,32 @@ function displayLeaderboard() {
   document.querySelector("#leaderboard").innerHTML = leaderboardHTML;
 }
 
-// Function to update game state and DOM
-function handleClick(square) {
-  if (squares[square] || winner || disabled) {
-    return;
-  }
+// Handles a player's move.
+function handleClick(index) {
+  if (squares[index] || winner || disabled) return;
   moveHistory.push([...squares]); // Store current state
-  squares[square] = xIsNext ? "X" : "O";
-  squaresElements[square].textContent = squares[square];
+  squares[index] = xIsNext ? "X" : "O";
+  squaresElements[index].textContent = squares[index];
   xIsNext = !xIsNext;
   winner = calculateWinner(squares);
   if (winner) {
     statusElement.textContent = `${winner} wins!`;
     disabled = true;
-    updateRatings(winner);
-    awardCoins(winner);
-    storeGameHistory(winner);
-    // Update leaderboard after a win
-    displayLeaderboard();
+    updateRatings(winner); // Update ratings
+    updateAwardCoins(winner); // Awards coins
+    updateGameHistory(winner); // Store game history
+    updateLeaderboard(); // Updates the leaderboard
   } else {
     statusElement.textContent = `Next player : ${xIsNext ? "X" : "O"}`;
     startTimer();
-    if (mode === "pvc") {
-      makeAIMove();
-    }
+    if (mode === "pvc") makeAIMove();
   }
 }
 
 // Reset the Game
 function resetGame() {
   // Reset game state variables
-  squares = Array(totalSquares).fill("");
+  squares.fill("", 0, totalSquares);
   xIsNext = true;
   winner = null;
   disabled = false;
@@ -201,8 +208,10 @@ function resetGame() {
   statusElement.textContent = "Next player: X";
 
   // Update leaderboard after reset
-  displayLeaderboard();
+  updateLeaderboard();
 }
+
+// Event Listeners
 
 // Add event listeners to squares
 squaresElements.forEach((squareElement, index) => {
@@ -218,7 +227,7 @@ gameModes.forEach((button) => {
 });
 
 // Reset the game board
-resetElement.addEventListener("click", () => resetGame());
+resetElement.addEventListener("click", resetGame);
 
 // Undo functionality
 undoElement.addEventListener("click", () => {
@@ -234,4 +243,5 @@ undoElement.addEventListener("click", () => {
   }
 });
 
-displayLeaderboard();
+// Initialize leaderboard
+updateLeaderboard();
