@@ -1,3 +1,4 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e14ecba1-ae95-4d68-81b7-9af49e0f493c/deploy-status)](https://app.netlify.com/sites/tic-tac-toe-action/deploys)
 # Tic Tac Toe Game
 
 This is a simple Tic Tac Toe game built with HTML, CSS, and vanilla JavaScript. The game features a 3x3 grid of cells and allows two players to take turns marking the cells with their respective symbols (X and O). The first player to get three in a row(horizontally, vertically, or diagonally )wins the game.
