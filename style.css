@@ -1,35 +1,162 @@
-.status {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+/* General Styles */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
+#app {
+  text-align: center;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Mode Selection Buttons */
+.mode-selection {
+  margin-bottom: 1.5rem;
+}
+
+.mode-selection button {
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mode-selection button:hover {
+  background-color: #3700b3;
+  transform: scale(1.05);
+}
+
+.mode-selection button:active {
+  transform: scale(0.95);
+}
+
+/* Status Message */
+.status {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Board and Squares */
 .board-row {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.board-row p {
-  display: inline-block;
-}
-
 .square {
   width: 100px;
   height: 100px;
-  font-size: 5rem;
+  font-size: 3rem;
   text-align: center;
-  border: 2px solid black;
+  border: 2px solid #ddd;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  border-radius: 10px;
+  margin: 5px;
 }
 
 .square:hover {
-  background-color: lightgray;
+  background-color: #f0f0f0;
+  transform: scale(1.05);
 }
 
+.square:active {
+  transform: scale(0.95);
+}
+
+/* Player Symbols */
 .x {
-  color: blue;
+  color: #2196f3; /* Blue for X */
 }
 
 .o {
-  color: red;
+  color: #f44336; /* Red for O */
+}
+
+/* Reset and Undo Buttons */
+.reset,
+.undo {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reset:hover,
+.undo:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}
+
+.reset:active,
+.undo:active {
+  transform: scale(0.95);
+}
+
+/* Leaderboard */
+#leaderboard {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#leaderboard h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+#leaderboard p {
+  font-size: 1.1rem;
+  margin: 0.25rem 0;
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .square {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+  }
+
+  .status {
+    font-size: 1.25rem;
+  }
+
+  .mode-selection button,
+  .reset,
+  .undo {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
 }
